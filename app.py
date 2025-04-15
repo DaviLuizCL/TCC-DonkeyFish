@@ -5,7 +5,7 @@ from ultralytics import YOLO
 model = YOLO("yolov8n.pt")  # Pode usar yolov8s.pt ou yolov8m.pt pra mais precisão
 
 # Define a "linha d'água"
-WATER_LINE_Y = 300  # ajustar conforme necessário
+WATER_LINE_X = 300  # ajustar conforme necessário
 
 # Abre a webcam
 cap = cv2.VideoCapture(0)
@@ -21,8 +21,8 @@ while True:
         cls = int(box.cls[0])
         if cls == 0:  # 0 é a classe "person" no COCO
             x1, y1, x2, y2 = map(int, box.xyxy[0])
-            person_height = y2 - y1
-            submersion = y2 - WATER_LINE_Y
+            person_height = x2 - x1
+            submersion = x2 - WATER_LINE_X
 
             # Calcula fração do corpo abaixo da linha
             ratio = max(submersion / person_height, 0) if person_height > 0 else 0
@@ -39,7 +39,7 @@ while True:
                 )
 
     # Desenha a linha d'água
-    cv2.line(frame, (0, WATER_LINE_Y), (frame.shape[1], WATER_LINE_Y), (255, 0, 0), 2)
+    cv2.line(frame, (WATER_LINE_X, 0), (WATER_LINE_X, frame.shape[1]), (255, 0, 0), 2)
 
     cv2.imshow("Queda com YOLO", frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
